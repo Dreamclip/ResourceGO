@@ -20,6 +20,7 @@ function createSplashWindow() {
     transparent: true,
     frame: false,
     alwaysOnTop: true,
+    resizable: false,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true
@@ -28,31 +29,65 @@ function createSplashWindow() {
 
   splashWindow.loadFile('splash.html');
   
+  // Force show the splash window
+  splashWindow.show();
+  
   // Проверяем обновления если доступно
   if (autoUpdater) {
-    autoUpdater.checkForUpdatesAndNotify();
+    // Настраиваем для dev режима
+    autoUpdater.autoDownload = false;
+    autoUpdater.autoInstallOnAppQuit = true;
+    
+    autoUpdater.checkForUpdatesAndNotify().then(() => {
+      // Когда проверка завершена (даже если нет обновлений), запускаем основное приложение
+      setTimeout(() => {
+        launchMainApp();
+      }, 1500);
+    }).catch(error => {
+      console.log('Update check failed:', error);
+      // В случае ошибки все равно запускаем приложение
+      setTimeout(() => {
+        launchMainApp();
+      }, 1500);
+    });
   } else {
     // Fallback: симулируем проверку
     setTimeout(() => {
-      splashWindow.webContents.send('update-status', 'Launching application...');
-      setTimeout(() => {
-        if (splashWindow) {
-          splashWindow.close();
-        }
-        if (mainWindow) {
-          mainWindow.show();
-        }
-      }, 1000);
-    }, 2000);
+      launchMainApp();
+    }, 2500);
+  }
+}
+
+function launchMainApp() {
+  if (splashWindow) {
+    splashWindow.webContents.send('update-status', 'Launching application...');
+    setTimeout(() => {
+      if (splashWindow && !splashWindow.isDestroyed()) {
+        splashWindow.close();
+        splashWindow = null;
+      }
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    }, 800);
   }
 }
 
 function createMainWindow() {
+  // Рассчитываем размеры с учетом title bar
+  const { screen } = require('electron');
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workAreaSize;
+  
+  const windowWidth = Math.min(1200, width - 100);
+  const windowHeight = Math.min(800, height - 100);
+
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: windowWidth,
+    height: windowHeight,
     minWidth: 900,
-    minHeight: 600,
+    minHeight: 650, // Увеличил минимальную высоту
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -62,13 +97,22 @@ function createMainWindow() {
     backgroundColor: '#000000',
     frame: false,
     titleBarStyle: 'hidden',
-    show: false
+    show: false,
+    titleBarOverlay: {
+      color: '#000000',
+      symbolColor: '#ffffff',
+      height: 32
+    }
   });
 
   mainWindow.loadFile('index.html');
   
-  mainWindow.once('ready-to-show', () => {
-    // Окно покажется после закрытия splash screen
+  // Центрируем окно
+  mainWindow.center();
+  
+  // Обработчик изменения размера
+  mainWindow.on('resize', () => {
+    // Можно добавить логику адаптации при изменении размера
   });
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -80,38 +124,43 @@ function createMainWindow() {
 // Auto Updater events
 if (autoUpdater) {
   autoUpdater.on('update-available', () => {
-    if (splashWindow) {
+    if (splashWindow && !splashWindow.isDestroyed()) {
       splashWindow.webContents.send('update-status', 'Update available. Downloading...');
     }
+    // Автоматически начинаем скачивание
+    autoUpdater.downloadUpdate();
   });
 
   autoUpdater.on('update-not-available', () => {
-    if (splashWindow) {
-      splashWindow.webContents.send('update-status', 'Launching application...');
-      setTimeout(() => {
-        if (splashWindow) {
-          splashWindow.close();
-        }
-        if (mainWindow) {
-          mainWindow.show();
-        }
-      }, 1000);
+    if (splashWindow && !splashWindow.isDestroyed()) {
+      splashWindow.webContents.send('update-status', 'No updates available. Launching...');
     }
   });
 
   autoUpdater.on('download-progress', (progressObj) => {
-    if (splashWindow) {
+    if (splashWindow && !splashWindow.isDestroyed()) {
       splashWindow.webContents.send('download-progress', progressObj.percent);
     }
   });
 
   autoUpdater.on('update-downloaded', () => {
-    if (splashWindow) {
-      splashWindow.webContents.send('update-status', 'Update downloaded. Restarting...');
+    if (splashWindow && !splashWindow.isDestroyed()) {
+      splashWindow.webContents.send('update-status', 'Update downloaded! Restarting...');
       setTimeout(() => {
         autoUpdater.quitAndInstall();
       }, 1000);
     }
+  });
+
+  autoUpdater.on('error', (error) => {
+    console.log('Updater error:', error);
+    if (splashWindow && !splashWindow.isDestroyed()) {
+      splashWindow.webContents.send('update-status', 'Update check failed. Launching...');
+    }
+    // Все равно запускаем приложение при ошибке
+    setTimeout(() => {
+      launchMainApp();
+    }, 1500);
   });
 }
 

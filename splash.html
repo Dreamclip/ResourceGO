@@ -103,21 +103,37 @@
     </div>
     <div class="version" id="app-version">v1.1.0</div>
 
-    <script>
-        const { ipcRenderer } = require('electron');
-        
-        ipcRenderer.on('update-status', (event, message) => {
-            document.getElementById('status-text').textContent = message;
-        });
+<script>
+    const { ipcRenderer } = require('electron');
+    
+    ipcRenderer.on('update-status', (event, message) => {
+        document.getElementById('status-text').textContent = message;
+    });
 
-        ipcRenderer.on('download-progress', (event, percent) => {
-            document.getElementById('progress-fill').style.width = `${percent}%`;
-        });
+    ipcRenderer.on('download-progress', (event, percent) => {
+        document.getElementById('progress-fill').style.width = `${percent}%`;
+    });
 
-        // Get app version
-        ipcRenderer.invoke('get-app-version').then(version => {
-            document.getElementById('app-version').textContent = `v${version}`;
-        });
-    </script>
+    // Get app version
+    ipcRenderer.invoke('get-app-version').then(version => {
+        document.getElementById('app-version').textContent = `v${version}`;
+    });
+
+    // Fallback: если через 5 секунд приложение не запустилось, покажем ошибку
+    setTimeout(() => {
+        const statusText = document.getElementById('status-text');
+        if (statusText.textContent.includes('Checking') || statusText.textContent.includes('Launching')) {
+            statusText.textContent = 'Taking longer than expected...';
+            statusText.style.color = '#ffa500';
+        }
+    }, 5000);
+
+    // Extreme fallback: через 10 секунд пытаемся закрыть splash
+    setTimeout(() => {
+        const statusText = document.getElementById('status-text');
+        statusText.textContent = 'Failed to launch. Please restart the application.';
+        statusText.style.color = '#ff4757';
+    }, 10000);
+</script>
 </body>
 </html>

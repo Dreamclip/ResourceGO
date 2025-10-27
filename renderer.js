@@ -1,6 +1,5 @@
-// Apps database with fixed icons
+
 const appsDatabase = [
-    // Programming apps
     {
         id: 'vscode',
         name: 'Visual Studio Code',
@@ -10,7 +9,7 @@ const appsDatabase = [
         category: 'programming'
     },
     {
-        id: 'nodejs',
+        id: 'nodejs', 
         name: 'Node.js',
         description: 'JavaScript runtime built on Chrome V8 engine',
         downloadUrl: 'https://nodejs.org/dist/v18.16.0/node-v18.16.0-x64.msi',
@@ -41,8 +40,6 @@ const appsDatabase = [
         iconUrl: 'https://cdn.icon-icons.com/icons2/3053/PNG/512/postman_alt_macos_bigsur_icon_189814.png',
         category: 'programming'
     },
-    
-    // Default apps
     {
         id: 'discord',
         name: 'Discord',
@@ -82,34 +79,13 @@ const appsDatabase = [
         downloadUrl: 'https://get.videolan.org/vlc/3.0.18/win64/vlc-3.0.18-win64.exe',
         iconUrl: 'https://cdn.icon-icons.com/icons2/558/PNG/512/VLC_icon-icons.com_54252.png',
         category: 'default'
-    },
-    {
-        id: 'firefox',
-        name: 'Mozilla Firefox',
-        description: 'Free and open-source web browser',
-        downloadUrl: 'https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US',
-        iconUrl: 'https://cdn.icon-icons.com/icons2/390/PNG/512/firefox_39297.png',
-        category: 'default'
     }
 ];
-
-// Download button SVG icon
-const downloadIconSVG = `
-<svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 16L12 4M12 16L8 12M12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M4 20H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-</svg>
-`;
 
 class AppManager {
     constructor() {
         this.currentCategory = 'programming';
         this.searchTerm = '';
-        this.appsGrid = document.getElementById('apps-grid');
-        this.categoryTitle = document.getElementById('category-title');
-        this.categoryDescription = document.getElementById('category-description');
-        this.settingsContent = document.getElementById('settings-content');
-        
         this.init();
     }
 
@@ -135,21 +111,17 @@ class AppManager {
     }
 
     setupEventListeners() {
-        // Navigation buttons
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 this.switchCategory(e.currentTarget.dataset.category);
             });
         });
 
-        // Search input
-        const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('input', (e) => {
+        document.getElementById('search-input').addEventListener('input', (e) => {
             this.searchTerm = e.target.value.toLowerCase();
             this.renderApps();
         });
 
-        // Login modal
         document.getElementById('login-btn').addEventListener('click', () => {
             this.showLoginModal();
         });
@@ -158,18 +130,8 @@ class AppManager {
             this.hideLoginModal();
         });
 
-        // Settings
-        document.getElementById('check-updates-btn').addEventListener('click', () => {
-            this.checkForUpdates();
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'f') {
-                e.preventDefault();
-                searchInput.focus();
-            }
-            if (e.key === 'Escape') {
+        document.getElementById('login-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'login-modal') {
                 this.hideLoginModal();
             }
         });
@@ -186,23 +148,25 @@ class AppManager {
     }
 
     switchCategory(category) {
-        // Update active button
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         document.querySelector(`[data-category="${category}"]`).classList.add('active');
 
-        // Update category
         this.currentCategory = category;
-        
-        // Show/hide content based on category
+    
         if (category === 'settings') {
-            this.appsGrid.classList.add('hidden');
-            this.settingsContent.classList.remove('hidden');
+            // В НАСТРОЙКАХ - СКРЫВАЕМ ПОИСК И ПРИЛОЖЕНИЯ
+            document.getElementById('apps-grid').classList.add('hidden');
+            document.getElementById('settings-content').classList.remove('hidden');
+            document.querySelector('.search-container').classList.add('hidden');
             this.updateSettingsHeader();
+            this.renderSettings();
         } else {
-            this.appsGrid.classList.remove('hidden');
-            this.settingsContent.classList.add('hidden');
+            // В КАТЕГОРИЯХ - ПОКАЗЫВАЕМ ПОИСК И ПРИЛОЖЕНИЯ
+            document.getElementById('apps-grid').classList.remove('hidden');
+            document.getElementById('settings-content').classList.add('hidden');
+            document.querySelector('.search-container').classList.remove('hidden');
             this.updateCategoryHeader();
             this.renderApps();
         }
@@ -210,24 +174,21 @@ class AppManager {
 
     updateCategoryHeader() {
         const titles = {
-            programming: {
-                title: 'Programming Apps',
-                description: 'Development tools and programming environments'
-            },
-            default: {
-                title: 'Default Apps', 
-                description: 'Essential applications for everyday use'
-            }
+            programming: 'Programming Apps',
+            default: 'Default Apps'
+        };
+        const descriptions = {
+            programming: 'Development tools and programming environments',
+            default: 'Essential applications for everyday use'
         };
 
-        const current = titles[this.currentCategory];
-        this.categoryTitle.textContent = current.title;
-        this.categoryDescription.textContent = current.description;
+        document.getElementById('category-title').textContent = titles[this.currentCategory];
+        document.getElementById('category-description').textContent = descriptions[this.currentCategory];
     }
 
     updateSettingsHeader() {
-        this.categoryTitle.textContent = 'Settings';
-        this.categoryDescription.textContent = 'Configure your ResourceGO experience';
+        document.getElementById('category-title').textContent = 'Settings';
+        document.getElementById('category-description').textContent = 'Configure your ResourceGO experience';
     }
 
     showLoginModal() {
@@ -236,6 +197,207 @@ class AppManager {
 
     hideLoginModal() {
         document.getElementById('login-modal').classList.add('hidden');
+    }
+
+    getFilteredApps() {
+        // ЕСЛИ МЫ В НАСТРОЙКАХ - НЕ ФИЛЬТРУЕМ ПРИЛОЖЕНИЯ!
+        if (this.currentCategory === 'settings') {
+            return [];
+        }
+    
+        let filteredApps = appsDatabase.filter(app => app.category === this.currentCategory);
+    
+        if (this.searchTerm) {
+            filteredApps = filteredApps.filter(app => 
+                app.name.toLowerCase().includes(this.searchTerm) ||
+                app.description.toLowerCase().includes(this.searchTerm)
+            );
+        }
+    
+        return filteredApps;
+    }   
+
+    renderApps() {
+        const appsGrid = document.getElementById('apps-grid');
+        appsGrid.innerHTML = '';
+        
+        const filteredApps = this.getFilteredApps();
+        
+        if (filteredApps.length === 0) {
+            appsGrid.innerHTML = `
+                <div class="no-apps">
+                    <h3>No applications found</h3>
+                    <p>${this.searchTerm ? 'Try adjusting your search terms' : 'There are no applications in this category yet'}</p>
+                </div>
+            `;
+            return;
+        }
+        
+        filteredApps.forEach((app, index) => {
+            const appCard = this.createAppCard(app, index);
+            appsGrid.appendChild(appCard);
+        });
+    }
+
+    createAppCard(app, index) {
+        const card = document.createElement('div');
+        card.className = 'app-card';
+        card.style.animationDelay = `${index * 0.1}s`;
+    
+        card.innerHTML = `
+            <div class="app-card-header">
+                <img src="${app.iconUrl}" alt="${app.name}" class="app-icon" 
+                    onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0iIzFhMWExYSIvPgo8cGF0aCBkPSJNMTQgMTJIMjZWMjhIMTRWMTJaIiBzdHJva2U9IiM2NjY2NjYiIHN0cm9rZS13aWR0aD0iMiIvPgo8cGF0aCBkPSJNMTQgMTZIMjZWMjBIMTRWMTZaIiBzdHJva2U9IiM2NjY2NjYiIHN0cm9rZS13aWR0aD0iMiIvPgo8L3N2Zz4K'">
+                <h3 class="app-name">${app.name}</h3>
+            </div>
+            <p class="app-description">${app.description}</p>
+            <button class="install-btn" data-app-id="${app.id}">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 16L12 4M12 16L8 12M12 16L16 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 20H20" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Install Package
+            </button>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        `;
+
+        const installBtn = card.querySelector('.install-btn');
+        installBtn.addEventListener('click', () => this.installApp(app, installBtn));
+
+        return card;
+    }
+
+    async installApp(app, button) {
+        const progressBar = button.nextElementSibling;
+        const progressFill = progressBar.querySelector('.progress-fill');
+    
+        const originalText = button.innerHTML;
+    
+        try {
+            button.classList.add('loading');
+            progressBar.style.display = 'block';
+            button.innerHTML = `
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 2V6M12 18V22M4 12H8M16 12H20" stroke-width="2"/>
+                </svg>
+                Starting download...
+            `;
+        
+            // Анимация прогресса
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 90) {
+                    progress = 90;
+                    clearInterval(progressInterval);
+                }
+                progressFill.style.width = `${progress}%`;
+            }, 200);
+        
+            const result = await window.electronAPI.downloadApp(app);
+            clearInterval(progressInterval);
+        
+            if (result.success) {
+                button.classList.remove('loading');
+                button.classList.add('success');
+                progressFill.style.width = '100%';
+                button.innerHTML = `
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M20 6L9 17L4 12" stroke-width="2"/>
+                    </svg>
+                    Download Complete!
+                `;
+            
+                // Анимация успеха
+                button.style.animation = 'pulse 0.5s ease-in-out';
+                setTimeout(() => {
+                    button.style.animation = '';
+                    button.innerHTML = originalText;
+                    button.classList.remove('success');
+                    progressBar.style.display = 'none';
+                    progressFill.style.width = '0%';
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Download error:', error);
+            button.classList.remove('loading');
+            button.classList.add('error');
+            progressBar.style.display = 'none';
+            button.innerHTML = `
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M18 6L6 18M6 6L18 18" stroke-width="2"/>
+                </svg>
+                Download Failed!
+            `;
+        
+            // Анимация ошибки
+            button.style.animation = 'shake 0.5s ease-in-out';
+            setTimeout(() => {
+                button.style.animation = '';
+                button.innerHTML = originalText;
+                button.classList.remove('error');
+            }, 3000);
+        }
+    }
+
+    renderSettings() {
+        const settingsContent = document.getElementById('settings-content');
+        settingsContent.innerHTML = `
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h3>Application Settings</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-label">Auto-check for updates</span>
+                            <span class="setting-description">Automatically check for new versions on startup</span>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auto-update" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-label">Start with system</span>
+                            <span class="setting-description">Launch ResourceGO when your computer starts</span>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="startup">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <h3>About ResourceGO</h3>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-label">Version</span>
+                            <span class="setting-description" id="settings-version">v1.2.0</span>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <span class="setting-label">Developer</span>
+                            <span class="setting-description">ResourceGO Team</span>
+                        </div>
+                    </div>
+                    <div class="settings-actions">
+                        <button class="action-btn" id="check-updates-btn">Check for Updates</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('check-updates-btn').addEventListener('click', () => {
+            this.checkForUpdates();
+        });
     }
 
     checkForUpdates() {
@@ -253,124 +415,8 @@ class AppManager {
             }, 2000);
         }, 1500);
     }
-
-    getFilteredApps() {
-        let filteredApps = appsDatabase.filter(app => app.category === this.currentCategory);
-        
-        if (this.searchTerm) {
-            filteredApps = filteredApps.filter(app => 
-                app.name.toLowerCase().includes(this.searchTerm) ||
-                app.description.toLowerCase().includes(this.searchTerm)
-            );
-        }
-        
-        return filteredApps;
-    }
-
-    renderApps() {
-        this.appsGrid.innerHTML = '';
-        
-        const filteredApps = this.getFilteredApps();
-        
-        if (filteredApps.length === 0) {
-            this.appsGrid.innerHTML = `
-                <div class="no-apps">
-                    <h3>No applications found</h3>
-                    <p>${this.searchTerm ? 'Try adjusting your search terms' : 'There are no applications in this category yet'}</p>
-                </div>
-            `;
-            return;
-        }
-        
-        filteredApps.forEach((app, index) => {
-            const appCard = this.createAppCard(app);
-            this.appsGrid.appendChild(appCard);
-        });
-    }
-
-    createAppCard(app) {
-        const card = document.createElement('div');
-        card.className = 'app-card';
-        card.innerHTML = `
-            <div class="app-card-header">
-                <img src="${app.iconUrl}" alt="${app.name}" class="app-icon" 
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiByeD0iMTAiIGZpbGw9IiMzMzMzMzMiLz4KPHN2ZyB4PSIxMi41IiB5PSIxMi41IiB3aWR0aD0iMjUiIGhlaWdodD0iMjUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2NjY2IiBzdHJva2Utd2lkdGg9IjIiPgo8cGF0aCBkPSJNMTQgMkg2QTIgMiAwIDAgMCA0IDR2MTZhMiAyIDAgMCAwIDIgMmgxMmEyIDIgMCAwIDAgMi0yVjhhNiA2IDAgMCAwLTYtNnoiLz4KPHBhdGggZD0iTTE0IDJ2Nmg0Ii8+Cjwvc3ZnPgo8L3N2Zz4K'">
-                <h3 class="app-name">${app.name}</h3>
-            </div>
-            <p class="app-description">${app.description}</p>
-            <button class="install-btn" data-app-id="${app.id}">
-                ${downloadIconSVG}
-                Install Package
-            </button>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
-        `;
-
-        const installBtn = card.querySelector('.install-btn');
-        installBtn.addEventListener('click', () => this.installApp(app));
-
-        return card;
-    }
-
-    async installApp(app) {
-        const button = document.querySelector(`[data-app-id="${app.id}"]`);
-        const progressBar = button.nextElementSibling;
-        const progressFill = progressBar.querySelector('.progress-fill');
-        
-        const originalText = button.innerHTML;
-        
-        try {
-            button.classList.add('loading');
-            progressBar.style.display = 'block';
-            button.innerHTML = `${downloadIconSVG} Starting download...`;
-            
-            // Simulate progress for better UX
-            this.simulateProgress(progressFill);
-            
-            const result = await window.electronAPI.downloadApp(app);
-            
-            if (result.success) {
-                button.classList.remove('loading');
-                button.classList.add('success');
-                progressFill.style.width = '100%';
-                button.innerHTML = `${downloadIconSVG} Download Complete!`;
-                
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.classList.remove('success');
-                    progressBar.style.display = 'none';
-                    progressFill.style.width = '0%';
-                }, 3000);
-            }
-        } catch (error) {
-            console.error('Download error:', error);
-            button.classList.remove('loading');
-            button.classList.add('error');
-            progressBar.style.display = 'none';
-            button.innerHTML = `${downloadIconSVG} Download Failed!`;
-            
-            setTimeout(() => {
-                button.innerHTML = originalText;
-                button.classList.remove('error');
-            }, 3000);
-        }
-    }
-
-    simulateProgress(progressFill) {
-        let progress = 0;
-        const interval = setInterval(() => {
-            progress += Math.random() * 10;
-            if (progress >= 90) {
-                progress = 90;
-                clearInterval(interval);
-            }
-            progressFill.style.width = `${progress}%`;
-        }, 200);
-    }
 }
 
-// Initialize app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new AppManager();
 });
