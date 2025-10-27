@@ -589,121 +589,133 @@ class AppManager {
     }
 
     renderSettings() {
-        const settingsContent = document.getElementById('settings-content');
-        settingsContent.innerHTML = `
-            <div class="settings-grid">
-                <div class="settings-card">
-                    <h3>Application Settings</h3>
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <span class="setting-label">Auto-check for updates</span>
-                            <span class="setting-description">Automatically check for new versions on startup</span>
-                        </div>
-                        <div class="setting-control">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="auto-update" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
+    const settingsContent = document.getElementById('settings-content');
+    settingsContent.innerHTML = `
+        <div class="settings-grid">
+            <div class="settings-card">
+                <h3>Application Settings</h3>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Auto-check for updates</span>
+                        <span class="setting-description">Automatically check for new versions on startup</span>
                     </div>
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <span class="setting-label">Start with system</span>
-                            <span class="setting-description">Launch ResourceGO when your computer starts</span>
-                        </div>
-                        <div class="setting-control">
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="startup">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="auto-update" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
                 </div>
-
-                <div class="settings-card">
-                    <h3>Theme Settings</h3>
-                    <div class="theme-selector">
-                        <div class="theme-option ${this.currentTheme === 'dark' ? 'active' : ''} theme-dark" 
-                             onclick="appManager.switchTheme('dark')">
-                            <div class="theme-preview"></div>
-                            <div>Dark</div>
-                        </div>
-                        <div class="theme-option ${this.currentTheme === 'transparent' ? 'active' : ''} theme-transparent" 
-                             onclick="appManager.switchTheme('transparent')">
-                            <div class="theme-preview"></div>
-                            <div>Transparent</div>
-                        </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Start with system</span>
+                        <span class="setting-description">Launch ResourceGO when your computer starts</span>
                     </div>
-                </div>
-
-                <div class="settings-card">
-                    <h3>Application Statistics</h3>
-                    <div class="stats-grid">
-                        <div class="stat-card floating">
-                            <div class="stat-number">${this.stats.totalDownloads}</div>
-                            <div class="stat-label">Total Downloads</div>
-                        </div>
-                        <div class="stat-card floating" style="animation-delay: 0.2s">
-                            <div class="stat-number">${this.stats.availableApps}</div>
-                            <div class="stat-label">Available Apps</div>
-                        </div>
-                        <div class="stat-card floating" style="animation-delay: 0.4s">
-                            <div class="stat-number">${this.stats.installedApps}</div>
-                            <div class="stat-label">Installed Apps</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="settings-card">
-                    <h3>About ResourceGO</h3>
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <span class="setting-label">Version</span>
-                            <span class="setting-description" id="settings-version">v1.2.0</span>
-                        </div>
-                    </div>
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <span class="setting-label">Developer</span>
-                            <span class="setting-description">Dreamclip</span>
-                        </div>
-                    </div>
-                    <div class="setting-item">
-                        <div class="setting-info">
-                            <span class="setting-label">GitHub</span>
-                            <span class="setting-description">github.com/Dreamclip/ResourceGO</span>
-                        </div>
-                    </div>
-                    <div class="settings-actions">
-                        <button class="action-btn" id="check-updates-btn">Check for Updates</button>
-                        <button class="action-btn secondary" onclick="appManager.openGitHub()">Visit GitHub</button>
+                    <div class="setting-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="startup">
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
                 </div>
             </div>
-        `;
 
-        document.getElementById('check-updates-btn').addEventListener('click', () => {
-            this.checkForUpdates();
+            <div class="settings-card">
+                <h3>Theme Settings</h3>
+                <div class="theme-selector">
+                    <div class="theme-option ${this.currentTheme === 'dark' ? 'active' : ''} theme-dark" 
+                         onclick="appManager.switchTheme('dark')">
+                        <div class="theme-preview"></div>
+                        <div>Dark</div>
+                    </div>
+                    <div class="theme-option ${this.currentTheme === 'transparent' ? 'active' : ''} theme-transparent" 
+                         onclick="appManager.switchTheme('transparent')">
+                        <div class="theme-preview"></div>
+                        <div>Transparent</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h3>Application Statistics</h3>
+                <div class="stats-grid">
+                    <div class="stat-card floating">
+                        <div class="stat-number">${this.stats.totalDownloads}</div>
+                        <div class="stat-label">Total Downloads</div>
+                    </div>
+                    <div class="stat-card floating" style="animation-delay: 0.2s">
+                        <div class="stat-number">${this.stats.availableApps}</div>
+                        <div class="stat-label">Available Apps</div>
+                    </div>
+                    <div class="stat-card floating" style="animation-delay: 0.4s">
+                        <div class="stat-number">${this.stats.installedApps}</div>
+                        <div class="stat-label">Installed Apps</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h3>About ResourceGO</h3>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Version</span>
+                        <span class="setting-description" id="settings-version">v1.2.1</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">Developer</span>
+                        <span class="setting-description">Dreamclip</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">GitHub</span>
+                        <span class="setting-description">github.com/Dreamclip/ResourceGO</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-label">License</span>
+                        <span class="setting-description">MIT License</span>
+                    </div>
+                </div>
+                <div class="settings-actions">
+                    <button class="action-btn" id="check-updates-btn">Check for Updates</button>
+                    <button class="action-btn secondary" onclick="appManager.openGitHub()">Visit GitHub</button>
+                </div>
+                <!-- Добавляем текст лицензии в самом низу -->
+                <div class="license-text" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                    <p style="font-size: 12px; color: var(--text-muted); text-align: center;">
+                        MIT License - Open Source Software
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('check-updates-btn').addEventListener('click', () => {
+        this.checkForUpdates();
+    });
+
+    // Setup toggle switches
+    const autoUpdate = document.getElementById('auto-update');
+    const startup = document.getElementById('startup');
+    
+    if (autoUpdate) {
+        autoUpdate.checked = localStorage.getItem('auto-update') !== 'false';
+        autoUpdate.addEventListener('change', (e) => {
+            localStorage.setItem('auto-update', e.target.checked);
         });
-
-        // Setup toggle switches
-        const autoUpdate = document.getElementById('auto-update');
-        const startup = document.getElementById('startup');
-        
-        if (autoUpdate) {
-            autoUpdate.checked = localStorage.getItem('auto-update') !== 'false';
-            autoUpdate.addEventListener('change', (e) => {
-                localStorage.setItem('auto-update', e.target.checked);
-            });
-        }
-        
-        if (startup) {
-            startup.checked = localStorage.getItem('startup') === 'true';
-            startup.addEventListener('change', (e) => {
-                localStorage.setItem('startup', e.target.checked);
-            });
-        }
     }
+    
+    if (startup) {
+        startup.checked = localStorage.getItem('startup') === 'true';
+        startup.addEventListener('change', (e) => {
+            localStorage.setItem('startup', e.target.checked);
+        });
+    }
+}
 
     checkForUpdates() {
         const btn = document.getElementById('check-updates-btn');
@@ -726,4 +738,5 @@ class AppManager {
 let appManager;
 document.addEventListener('DOMContentLoaded', () => {
     appManager = new AppManager();
+
 });
