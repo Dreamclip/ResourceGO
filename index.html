@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <!-- Custom Title Bar -->
     <div class="title-bar">
         <div class="title-bar-drag">
             <span class="app-title">ResourceGO</span>
@@ -20,7 +19,6 @@
     </div>
 
     <div class="app-container">
-        <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h1 class="logo">ResourceGO</h1>
@@ -29,67 +27,61 @@
             
             <div class="nav-buttons">
                 <button class="nav-btn active" data-category="programming">
-                    <img src="https://cdn-icons-png.flaticon.com/512/6062/6062646.png" class="nav-icon" alt="Code">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M8 9l3 3-3 3m5 0h3M4 4h16a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
                     <span class="nav-text">Programming</span>
                 </button>
                 <button class="nav-btn" data-category="default">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077063.png" class="nav-icon" alt="User">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.9 1 3 1.9 3 3V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V9ZM15 3L19 7H15V3ZM8 11H16V13H8V11ZM8 15H16V17H8V15Z" stroke-width="1.5" fill="currentColor"/>
+                    </svg>
                     <span class="nav-text">Default</span>
-                </button>
-                <button class="nav-btn" data-category="settings">
-                    <img src="https://cdn-icons-png.flaticon.com/512/126/126472.png" class="nav-icon" alt="Settings">
-                    <span class="nav-text">Settings</span>
                 </button>
             </div>
             
             <div class="sidebar-footer">
                 <div class="user-section">
                     <button class="login-btn" id="login-btn">
-                        <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" class="nav-icon" alt="Login">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M20 21V19C20 17.139 18.861 15.574 17 15.093V14.093C17.374 13.552 17.7 12.998 18 12.439C18.335 11.821 18.617 11.174 18.845 10.5C19.272 9.299 19.558 8.055 19.69 6.786C19.867 5.051 19.046 3.459 17.5 3.09V3.09H6.5V3.09C4.954 3.459 4.133 5.051 4.31 6.786C4.442 8.055 4.728 9.299 5.155 10.5C5.383 11.174 5.665 11.821 6 12.439C6.3 12.998 6.626 13.552 7 14.093V15.093C5.139 15.574 4 17.139 4 19V21"/>
+                        </svg>
                         <span>Login / Register</span>
                     </button>
                 </div>
-                <div class="version" id="version-display">v1.1.0</div>
+                <div class="footer-buttons">
+                    <button class="footer-btn" id="github-btn" title="GitHub Repository">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </button>
+                    <button class="footer-btn" id="settings-btn" title="Settings">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
+                            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="version" id="version-display">v1.2.0</div>
             </div>
         </nav>
 
-        <!-- Main content -->
         <main class="main-content">
             <div class="content-header">
                 <h2 id="category-title">Programming Apps</h2>
                 <p id="category-description">Applications for developers</p>
             </div>
 
-            <!-- Search Box -->
             <div class="search-container">
                 <input type="text" class="search-box" id="search-input" placeholder="Search applications...">
             </div>
 
-            <!-- Apps Grid -->
             <div class="apps-grid" id="apps-grid">
                 <!-- Apps will be loaded via JavaScript -->
             </div>
 
-            <!-- Settings Content (hidden by default) -->
             <div class="settings-content hidden" id="settings-content">
-                <div class="settings-section">
-                    <h3>Application Settings</h3>
-                    <div class="setting-item">
-                        <label>Auto-check for updates</label>
-                        <input type="checkbox" id="auto-update" checked>
-                    </div>
-                    <div class="setting-item">
-                        <label>Start with system</label>
-                        <input type="checkbox" id="startup">
-                    </div>
-                </div>
-                
-                <div class="settings-section">
-                    <h3>About ResourceGO</h3>
-                    <p>Version: <span id="settings-version">v1.1.0</span></p>
-                    <p>Open-source application manager</p>
-                    <button class="action-btn" id="check-updates-btn">Check for Updates</button>
-                </div>
+                <!-- Settings will be loaded via JavaScript -->
             </div>
         </main>
     </div>
@@ -102,11 +94,49 @@
                 <button class="close-modal" id="close-login-modal">×</button>
             </div>
             <div class="modal-body">
-                <div class="feature-in-dev">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2092/2092645.png" alt="In Development">
-                    <h4>Feature in Development</h4>
-                    <p>User authentication system is currently under development. This will allow users to upload and manage their own applications.</p>
-                    <p>Expected in v2.0.0</p>
+                <div class="auth-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="login">Login</button>
+                        <button class="tab-btn" data-tab="register">Register</button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="login-tab">
+                            <form class="auth-form" id="login-form">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="login-email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" id="login-password" required>
+                                </div>
+                                <button type="submit" class="auth-submit-btn">Login</button>
+                            </form>
+                        </div>
+                        
+                        <div class="tab-pane" id="register-tab">
+                            <form class="auth-form" id="register-form">
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input type="text" id="register-username" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="register-email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <input type="password" id="register-password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm Password</label>
+                                    <input type="password" id="register-confirm" required>
+                                </div>
+                                <button type="submit" class="auth-submit-btn">Register</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
