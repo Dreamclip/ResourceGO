@@ -1,0 +1,21 @@
+{
+  "name": "resourcego",
+  "version": "1.1.0",
+  "description": "Modern app store for developers and users",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "publish": "electron-builder --publish=always"
+  },
+  "devDependencies": {
+    "electron": "^latest",
+    "electron-builder": "^latest"
+  },
+  "author": "ResourceGO Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dreamclip/ResourceGO"
+  }
+}
