@@ -1,6 +1,14 @@
-const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
-const { autoUpdater } = require('electron-updater');
+
+// Проверяем что electron-updater доступен
+let autoUpdater;
+try {
+  autoUpdater = require('electron-updater').autoUpdater;
+} catch (error) {
+  console.log('Auto updater not available:', error.message);
+  autoUpdater = null;
+}
 
 let mainWindow;
 let splashWindow;
@@ -20,8 +28,23 @@ function createSplashWindow() {
 
   splashWindow.loadFile('splash.html');
   
-  // Check for updates
-  autoUpdater.checkForUpdatesAndNotify();
+  // Проверяем обновления если доступно
+  if (autoUpdater) {
+    autoUpdater.checkForUpdatesAndNotify();
+  } else {
+    // Fallback: симулируем проверку
+    setTimeout(() => {
+      splashWindow.webContents.send('update-status', 'Launching application...');
+      setTimeout(() => {
+        if (splashWindow) {
+          splashWindow.close();
+        }
+        if (mainWindow) {
+          mainWindow.show();
+        }
+      }, 1000);
+    }, 2000);
+  }
 }
 
 function createMainWindow() {
@@ -37,24 +60,17 @@ function createMainWindow() {
     },
     icon: path.join(__dirname, 'assets', 'icon.png'),
     backgroundColor: '#000000',
-    frame: false, // Убираем стандартную рамку
+    frame: false,
     titleBarStyle: 'hidden',
     show: false
   });
 
   mainWindow.loadFile('index.html');
   
-  // Показываем основное окно когда готово
   mainWindow.once('ready-to-show', () => {
-    setTimeout(() => {
-      if (splashWindow) {
-        splashWindow.close();
-      }
-      mainWindow.show();
-    }, 2000);
+    // Окно покажется после закрытия splash screen
   });
 
-  // Открываем внешние ссылки в браузере по умолчанию
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: 'deny' };
@@ -62,24 +78,42 @@ function createMainWindow() {
 }
 
 // Auto Updater events
-autoUpdater.on('update-available', () => {
-  splashWindow.webContents.send('update-status', 'Update available. Downloading...');
-});
+if (autoUpdater) {
+  autoUpdater.on('update-available', () => {
+    if (splashWindow) {
+      splashWindow.webContents.send('update-status', 'Update available. Downloading...');
+    }
+  });
 
-autoUpdater.on('update-not-available', () => {
-  splashWindow.webContents.send('update-status', 'Launching application...');
-});
+  autoUpdater.on('update-not-available', () => {
+    if (splashWindow) {
+      splashWindow.webContents.send('update-status', 'Launching application...');
+      setTimeout(() => {
+        if (splashWindow) {
+          splashWindow.close();
+        }
+        if (mainWindow) {
+          mainWindow.show();
+        }
+      }, 1000);
+    }
+  });
 
-autoUpdater.on('download-progress', (progressObj) => {
-  splashWindow.webContents.send('download-progress', progressObj.percent);
-});
+  autoUpdater.on('download-progress', (progressObj) => {
+    if (splashWindow) {
+      splashWindow.webContents.send('download-progress', progressObj.percent);
+    }
+  });
 
-autoUpdater.on('update-downloaded', () => {
-  splashWindow.webContents.send('update-status', 'Update downloaded. Restarting...');
-  setTimeout(() => {
-    autoUpdater.quitAndInstall();
-  }, 1000);
-});
+  autoUpdater.on('update-downloaded', () => {
+    if (splashWindow) {
+      splashWindow.webContents.send('update-status', 'Update downloaded. Restarting...');
+      setTimeout(() => {
+        autoUpdater.quitAndInstall();
+      }, 1000);
+    }
+  });
+}
 
 app.whenReady().then(() => {
   createSplashWindow();
@@ -121,4 +155,13 @@ ipcMain.handle('window-controls', (event, action) => {
 
 ipcMain.handle('get-app-version', () => {
   return app.getVersion();
+});
+
+ipcMain.handle('check-for-updates', () => {
+  if (autoUpdater) {
+    autoUpdater.checkForUpdates();
+    return { checking: true };
+  } else {
+    return { error: 'Auto updater not available' };
+  }
 });
